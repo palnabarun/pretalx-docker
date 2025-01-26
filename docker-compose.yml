@@ -4,7 +4,7 @@ services:
     image: pretalx/standalone:latest
     container_name: pretalx
     restart: unless-stopped
-    depends_on: 
+    depends_on:
       - redis
       - db
     environment:
@@ -13,32 +13,32 @@ services:
       PRETALX_FILESYSTEM_STATIC: /public/static
     ports:
       - "80:80"
-    volumes: 
+    volumes:
       - ./conf/pretalx.cfg:/etc/pretalx/pretalx.cfg:ro
       - pretalx-data:/data
       - pretalx-public:/public
     labels:
-       traefik.docker.network: "pretalxdocker"
-       traefik.enable: "true"
+      traefik.docker.network: "pretalxdocker"
+      traefik.enable: "true"
+    links:
+      - "db:pretalx-db"
 
   db:
-    image: mysql:latest
+    image: postgres:latest
     container_name: pretalx-db
     restart: unless-stopped
     volumes:
-      - pretalx-db:/var/lib/mysql
+      - pretalx-db:/var/lib/postgresql
     environment:
-      MYSQL_DATABASE: pretalx
-      MYSQL_USER: pretalx
-      MYSQL_PASSWORD: veryunsecureplschange
-      MYSQL_RANDOM_ROOT_PASSWORD: "1"
-    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+      POSTGRES_DB: pretalx
+      POSTGRES_USER: pretalx
+      POSTGRES_PASSWORD: veryunsecureplschange
 
   redis:
     image: redis:latest
     container_name: pretalx-redis
     restart: unless-stopped
-    volumes: 
+    volumes:
       - pretalx-redis:/data
 
 volumes:
@@ -46,4 +46,3 @@ volumes:
   pretalx-data:
   pretalx-public:
   pretalx-redis:
-
